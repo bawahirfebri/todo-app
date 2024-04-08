@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  /* border: 1px solid red; */
+}
+
+.task-input {
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  margin: 2rem 0;
+}
+
+.task-input input {
+  padding: .5rem .75rem;
+  font-size: 16px;
+  border-radius: .5rem 0 0 .5rem;
+  border: 2px solid #405b46;
+  background-color: #f3f6f4;
+}
+
+.task-input button {
+  padding: .5rem 1rem;
+  border-radius: 0 .5rem .5rem 0;
+  border: none;
+  background-color: #405b46;
+  color: #f3f6f4;
+  cursor: pointer;
+}
+
+.tasks {
+  list-style: none;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin: 2rem 0;
+}
+
+.task {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  /* background-color: #d1f1ff; */
+  border: 1px solid #c6d4c8;
+  border-radius: .5rem;
+  background-color: #f3f6f4;
+}
+
+.task-desc {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-btn {
+  /* background-color: red; */
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.filter-btn button {
+  flex: 1;
+  padding: .5rem 0;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+
+#filter-current {
+  background-color: #405b46;
+  color: #f3f6f4;
+  border-radius: .5rem;
+}
+
+.delete-btn {
+  padding: .5rem;
+  font-weight: 600;
+  border-radius: 50%;
+  border: none;
+  /* width: 2rem; */
+  /* height: 2rem; */
+  /* background-color: #007bff; */
+  /* color: #ebf9ff; */
+  background-color: transparent;
+  color: #405b46;
+  cursor: pointer;
+  font-size: 24px;
+
+}
+
+#task-completed {
+  text-decoration: line-through;
+  color: #c1bec1;
+}
+
+.progressbar-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 0 1rem;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.progressbar {
+  width: 100%;
+  background-color: #e2e9e2;
+  border-radius: .5rem;
+}
+
+.progress {
+  background-color: #405b46;
+  height: 24px;
+  border-radius: .5rem;
+  transition: all ease-in-out 500ms;
+}
+
