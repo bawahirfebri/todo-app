@@ -1,62 +1,70 @@
 import { useEffect, useState } from "react";
 
-const TASKS = [
-  {
-    id: Date.now() + 1,
-    text: "Task 1",
-    completed: false,
-    date: "4/11/2024",
-  },
-  {
-    id: Date.now() + 2,
-    text: "Task 2",
-    completed: true,
-    date: "4/9/2024",
-  },
-  {
-    id: Date.now() + 3,
-    text: "Task 3",
-    completed: false,
-    date: "4/11/2024",
-  },
-  {
-    id: Date.now() + 4,
-    text: "Task 4",
-    completed: true,
-    date: "4/11/2024",
-  },
-  {
-    id: Date.now() + 5,
-    text: "Task 5",
-    completed: true,
-    date: "4/9/2024",
-  },
-  {
-    id: Date.now() + 6,
-    text: "Task 6",
-    completed: false,
-    date: "4/9/2024",
-  },
-  {
-    id: Date.now() + 7,
-    text: "Task 7",
-    completed: false,
-    date: "4/11/2024",
-  },
-  {
-    id: Date.now() + 8,
-    text: "Task 8",
-    completed: false,
-    date: "4/10/2024",
-  },
-];
+const TASKS_STORAGE_KEY = "tasks";
+// const TASKS = [
+//   {
+//     id: Date.now() + 1,
+//     text: "Task 1",
+//     completed: false,
+//     date: "4/11/2024",
+//   },
+//   {
+//     id: Date.now() + 2,
+//     text: "Task 2",
+//     completed: true,
+//     date: "4/9/2024",
+//   },
+//   {
+//     id: Date.now() + 3,
+//     text: "Task 3",
+//     completed: false,
+//     date: "4/11/2024",
+//   },
+//   {
+//     id: Date.now() + 4,
+//     text: "Task 4",
+//     completed: true,
+//     date: "4/11/2024",
+//   },
+//   {
+//     id: Date.now() + 5,
+//     text: "Task 5",
+//     completed: true,
+//     date: "4/9/2024",
+//   },
+//   {
+//     id: Date.now() + 6,
+//     text: "Task 6",
+//     completed: false,
+//     date: "4/9/2024",
+//   },
+//   {
+//     id: Date.now() + 7,
+//     text: "Task 7",
+//     completed: false,
+//     date: "4/11/2024",
+//   },
+//   {
+//     id: Date.now() + 8,
+//     text: "Task 8",
+//     completed: false,
+//     date: "4/10/2024",
+//   },
+// ];
 
 function App() {
-  const [tasks, setTasks] = useState(TASKS);
+  const [tasks, setTasks] = useState(() => {
+    const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  });
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("all");
   const [selectedDateIndex, setSelectedDateIndex] = useState(new Date().getDate());
   const [filteredDateTasks, setFilteredDateTasks] = useState([]);
+
+  useEffect(() => {
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
   useEffect(() => {
     const currentDate = new Date().toLocaleDateString();
@@ -119,8 +127,6 @@ function App() {
   const totalTasksCount = tasks.length;
   const completedTasksCount = tasks.filter((task) => task.completed).length;
   const progress = totalTasksCount === 0 ? 0 : (completedTasksCount / totalTasksCount) * 100;
-
-  console.log(new Date().getDay(), new Date().getDate(), new Date().getDate() - new Date().getDay() + 1)
 
   return (
     <>
