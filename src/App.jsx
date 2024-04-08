@@ -1,56 +1,6 @@
 import { useEffect, useState } from "react";
 
 const TASKS_STORAGE_KEY = "tasks";
-// const TASKS = [
-//   {
-//     id: Date.now() + 1,
-//     text: "Task 1",
-//     completed: false,
-//     date: "4/11/2024",
-//   },
-//   {
-//     id: Date.now() + 2,
-//     text: "Task 2",
-//     completed: true,
-//     date: "4/9/2024",
-//   },
-//   {
-//     id: Date.now() + 3,
-//     text: "Task 3",
-//     completed: false,
-//     date: "4/11/2024",
-//   },
-//   {
-//     id: Date.now() + 4,
-//     text: "Task 4",
-//     completed: true,
-//     date: "4/11/2024",
-//   },
-//   {
-//     id: Date.now() + 5,
-//     text: "Task 5",
-//     completed: true,
-//     date: "4/9/2024",
-//   },
-//   {
-//     id: Date.now() + 6,
-//     text: "Task 6",
-//     completed: false,
-//     date: "4/9/2024",
-//   },
-//   {
-//     id: Date.now() + 7,
-//     text: "Task 7",
-//     completed: false,
-//     date: "4/11/2024",
-//   },
-//   {
-//     id: Date.now() + 8,
-//     text: "Task 8",
-//     completed: false,
-//     date: "4/10/2024",
-//   },
-// ];
 
 function App() {
   const [tasks, setTasks] = useState(() => {
@@ -124,12 +74,14 @@ function App() {
     filteredTasks = filteredDateTasks.filter((task) => task.completed);
   }
 
+  filteredTasks.sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
+
   const totalTasksCount = tasks.length;
   const completedTasksCount = tasks.filter((task) => task.completed).length;
   const progress = totalTasksCount === 0 ? 0 : (completedTasksCount / totalTasksCount) * 100;
 
   return (
-    <>
+    <div className="app">
       <h1 className="todo-app">TODO APP</h1>
       <ul className="tasks-date">
         {Array.from({ length: 7 }, (_, index) => {
@@ -159,12 +111,15 @@ function App() {
           Completed
         </button>
       </div>
-      <div className="progressbar-container">
+      {filteredTasks.length > 0 && <div className="progressbar-container">
         <div className="progressbar">
           <div className="progress" style={{ width: `${progress}%` }}></div>
         </div>
         <p>{Math.round(progress)}%</p>
-      </div>
+      </div>}
+      {filteredTasks.length === 0 && <div className="tasks-empty">
+        <p>Tasks empty</p>
+      </div>}
       <ul className="tasks">
         {filteredTasks.map((task) => (
           <li key={task.id} id={task.completed ? "task-completed" : null} className="task" onDoubleClick={() => handleCompleteTask(task.id)}>
@@ -178,7 +133,7 @@ function App() {
           </li>
         ))}
       </ul>
-    </>
+    </div>
   );
 }
 
