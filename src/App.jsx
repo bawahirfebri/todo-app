@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Calendar from "./components/Calendar";
 
 const TASKS_STORAGE_KEY = "tasks";
 
@@ -10,6 +11,7 @@ function App() {
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("all");
   const [selectedDateIndex, setSelectedDateIndex] = useState(new Date().getDate());
+  const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString())
   const [filteredDateTasks, setFilteredDateTasks] = useState([]);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ function App() {
         id: Date.now(),
         text: newTask,
         completed: false,
-        date: new Date().toLocaleDateString(),
+        date: currentDate,
       };
 
       setTasks((prevTasks) => [...prevTasks, newTaskObject]);
@@ -63,6 +65,7 @@ function App() {
   const handleFilterDateChange = (getDate, currentDate) => {
     setFilter("all");
     setSelectedDateIndex(getDate);
+    setCurrentDate(currentDate)
 
     setFilteredDateTasks(tasks.filter((task) => task.date === currentDate));
   };
@@ -83,6 +86,11 @@ function App() {
   return (
     <div className="app">
       <h1 className="todo-app">TODO APP</h1>
+      <div className="task-input">
+        <input type="text" value={newTask} onChange={handleInputChange} onKeyPress={handleInputKeyPress} />
+        <button onClick={handleAddTask}>Add</button>
+      </div>
+      <Calendar />
       <ul className="tasks-date">
         {Array.from({ length: 7 }, (_, index) => {
           const currentDate = new Date();
@@ -90,16 +98,12 @@ function App() {
 
           return (
             <li key={index} id={selectedDateIndex === currentDate.getDate() ? "tasks-date__current" : null} onClick={() => handleFilterDateChange(currentDate.getDate(), currentDate.toLocaleDateString())}>
-              <span>{currentDate.toLocaleDateString("en-US", { weekday: "short" })[0]}</span>
-              <span>{currentDate.getDate()}</span>
+              <span className="task-date__day">{currentDate.toLocaleDateString("en-US", { weekday: "short" })[0]}</span>
+              <span className="task-date__date">{currentDate.getDate()}</span>
             </li>
           );
         })}
       </ul>
-      <div className="task-input">
-        <input type="text" value={newTask} onChange={handleInputChange} onKeyPress={handleInputKeyPress} />
-        <button onClick={handleAddTask}>Add</button>
-      </div>
       <div className="filter-btn">
         <button id={filter === "all" ? "filter-current" : null} onClick={() => handleFilterChange("all")}>
           All
