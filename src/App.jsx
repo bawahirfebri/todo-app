@@ -10,18 +10,17 @@ function App() {
   });
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("all");
-  const [selectedDateIndex, setSelectedDateIndex] = useState(new Date().getDate());
-  const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString())
+  const [currentDateSelected, setCurrentDateSelected] = useState(new Date())
   const [filteredDateTasks, setFilteredDateTasks] = useState([]);
+  const [isCalendarShow, setIsCalendarShow] = useState(false)
 
   useEffect(() => {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);
 
   useEffect(() => {
-    const currentDate = new Date().toLocaleDateString();
-    setFilteredDateTasks(tasks.filter((task) => task.date === currentDate));
-  }, []);
+    setFilteredDateTasks(tasks.filter((task) => task.date === currentDateSelected.toLocaleDateString()));
+  }, [tasks, currentDateSelected]);
 
   const handleInputChange = (e) => {
     setNewTask(e.target.value);
@@ -39,7 +38,7 @@ function App() {
         id: Date.now(),
         text: newTask,
         completed: false,
-        date: currentDate,
+        date: currentDateSelected.toLocaleDateString(),
       };
 
       setTasks((prevTasks) => [...prevTasks, newTaskObject]);
@@ -62,13 +61,34 @@ function App() {
     setFilter(newFilter);
   };
 
-  const handleFilterDateChange = (getDate, currentDate) => {
+  const handleFilterDateChange = (getDate, currentDateSelected) => {
     setFilter("all");
-    setSelectedDateIndex(getDate);
-    setCurrentDate(currentDate)
+    setCurrentDateSelected(currentDateSelected)
 
-    setFilteredDateTasks(tasks.filter((task) => task.date === currentDate));
+    setFilteredDateTasks(tasks.filter((task) => task.date === currentDateSelected.toLocaleDateString()));
   };
+
+  const handlePrevDate = () => {
+    const currentDate = new Date(currentDateSelected)
+
+    if (currentDate.getDay() === 0) currentDate.setDate(currentDate.getDate() - currentDate.getDay() - 7)
+    else currentDate.setDate(currentDate.getDate() - currentDate.getDay())
+    
+    setCurrentDateSelected(currentDate)
+  }
+
+  const handleNextDate = () => {
+    const currentDate = new Date(currentDateSelected)
+
+    if (currentDate.getDay() === 0) currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1)
+    else currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 8)
+    
+    setCurrentDateSelected(currentDate)
+  }
+
+  const handleShowCalendar = () => {
+    setIsCalendarShow(prevState => !prevState)
+  }
 
   let filteredTasks = filteredDateTasks;
   if (filter === "active") {
@@ -90,20 +110,29 @@ function App() {
         <input type="text" value={newTask} onChange={handleInputChange} onKeyPress={handleInputKeyPress} />
         <button onClick={handleAddTask}>Add</button>
       </div>
-      <Calendar />
-      <ul className="tasks-date">
-        {Array.from({ length: 7 }, (_, index) => {
-          const currentDate = new Date();
-          currentDate.setDate(currentDate.getDate() - new Date().getDay() + 1 + index);
+      {isCalendarShow && <Calendar handleShowCalendar={handleShowCalendar} currentDateSelected={currentDateSelected} setCurrentDateSelected={setCurrentDateSelected} tasks={tasks} />}
+      <div className="tasks-date">
+        <div className="tasks-date__navigation">
+          <button onClick={handlePrevDate}>&lt;</button>
+          <p onClick={handleShowCalendar}>{currentDateSelected.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
+          <button onClick={handleNextDate}>&gt;</button>
+        </div>
+        <ul className="tasks-date__week">
+          {Array.from({ length: 7 }, (_, index) => {
+            const currentDate = new Date(currentDateSelected)
 
-          return (
-            <li key={index} id={selectedDateIndex === currentDate.getDate() ? "tasks-date__current" : null} onClick={() => handleFilterDateChange(currentDate.getDate(), currentDate.toLocaleDateString())}>
-              <span className="task-date__day">{currentDate.toLocaleDateString("en-US", { weekday: "short" })[0]}</span>
-              <span className="task-date__date">{currentDate.getDate()}</span>
-            </li>
-          );
-        })}
-      </ul>
+            if (currentDate.getDay() === 0) currentDate.setDate(currentDate.getDate() - currentDate.getDay() + index - 6)
+            else currentDate.setDate(currentDate.getDate() - currentDate.getDay() + index + 1)
+
+            return (
+              <li key={index} id={currentDate.getDate() === currentDateSelected.getDate() ? "tasks-date__current" : null} onClick={() => handleFilterDateChange(currentDate.getDate(), currentDate)}>
+                <span className="task-date__day">{currentDate.toLocaleDateString("en-US", { weekday: "short" })}</span>
+                <span className="task-date__date">{currentDate.getDate()}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <div className="filter-btn">
         <button id={filter === "all" ? "filter-current" : null} onClick={() => handleFilterChange("all")}>
           All
@@ -115,7 +144,7 @@ function App() {
           Completed
         </button>
       </div>
-      {filteredTasks.length > 0 && <div className="progressbar-container">
+      {tasks.length > 0 && <div className="progressbar-container">
         <div className="progressbar">
           <div className="progress" style={{ width: `${progress}%` }}></div>
         </div>
