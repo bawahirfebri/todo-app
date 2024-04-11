@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import Calendar from "./components/Calendar";
+import InputTask from "./components/InputTask";
+import DateTask from "./components/DateTask";
+import FilterTask from "./components/FilterTask";
+import Progressbar from "./components/Progressbar";
+import Tasks from "./components/Tasks";
+import EmptyTasks from "./components/EmptyTasks";
 
 const TASKS_STORAGE_KEY = "tasks";
 
@@ -106,66 +112,13 @@ function App() {
   return (
     <div className="app">
       <h1 className="todo-app">TODO APP</h1>
-      <div className="task-input">
-        <input type="text" value={newTask} onChange={handleInputChange} onKeyPress={handleInputKeyPress} />
-        <button onClick={handleAddTask}>Add</button>
-      </div>
+      <InputTask newTask={newTask} handleInputChange={handleInputChange} handleInputKeyPress={handleInputKeyPress} handleAddTask={handleAddTask} />
       {isCalendarShow && <Calendar handleShowCalendar={handleShowCalendar} currentDateSelected={currentDateSelected} setCurrentDateSelected={setCurrentDateSelected} tasks={tasks} />}
-      <div className="tasks-date">
-        <div className="tasks-date__navigation">
-          <button onClick={handlePrevDate}>&lt;</button>
-          <p onClick={handleShowCalendar}>{currentDateSelected.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
-          <button onClick={handleNextDate}>&gt;</button>
-        </div>
-        <ul className="tasks-date__week">
-          {Array.from({ length: 7 }, (_, index) => {
-            const currentDate = new Date(currentDateSelected)
-
-            if (currentDate.getDay() === 0) currentDate.setDate(currentDate.getDate() - currentDate.getDay() + index - 6)
-            else currentDate.setDate(currentDate.getDate() - currentDate.getDay() + index + 1)
-
-            return (
-              <li key={index} id={currentDate.getDate() === currentDateSelected.getDate() ? "tasks-date__current" : null} onClick={() => handleFilterDateChange(currentDate.getDate(), currentDate)}>
-                <span className="task-date__day">{currentDate.toLocaleDateString("en-US", { weekday: "short" })}</span>
-                <span className="task-date__date">{currentDate.getDate()}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="filter-btn">
-        <button id={filter === "all" ? "filter-current" : null} onClick={() => handleFilterChange("all")}>
-          All
-        </button>
-        <button id={filter === "active" ? "filter-current" : null} onClick={() => handleFilterChange("active")}>
-          Active
-        </button>
-        <button id={filter === "completed" ? "filter-current" : null} onClick={() => handleFilterChange("completed")}>
-          Completed
-        </button>
-      </div>
-      {tasks.length > 0 && <div className="progressbar-container">
-        <div className="progressbar">
-          <div className="progress" style={{ width: `${progress}%` }}></div>
-        </div>
-        <p>{Math.round(progress)}%</p>
-      </div>}
-      {filteredTasks.length === 0 && <div className="tasks-empty">
-        <p>Tasks empty</p>
-      </div>}
-      <ul className="tasks">
-        {filteredTasks.map((task) => (
-          <li key={task.id} id={task.completed ? "task-completed" : null} className="task" onDoubleClick={() => handleCompleteTask(task.id)}>
-            <span className="task-desc">
-              <input type="checkbox" onChange={() => handleCompleteTask(task.id)} checked={task.completed} />
-              <label id={task.completed ? "task-completed__text" : null}>{task.text}</label>
-            </span>
-            <button className="delete-btn" onClick={() => handleDeleteTask(task.id)}>
-              X
-            </button>
-          </li>
-        ))}
-      </ul>
+      <DateTask handlePrevDate={handlePrevDate} handleNextDate={handleNextDate} handleShowCalendar={handleShowCalendar} currentDateSelected={currentDateSelected} handleFilterDateChange={handleFilterDateChange} />
+      <FilterTask filter={filter} handleFilterChange={handleFilterChange} />
+      {tasks.length > 0 && <Progressbar progress={progress} />}
+      {filteredTasks.length === 0 && <EmptyTasks />}
+      <Tasks filteredTasks={filteredTasks} handleCompleteTask={handleCompleteTask} handleDeleteTask={handleDeleteTask} />
     </div>
   );
 }
