@@ -19,6 +19,8 @@ function App() {
   const [currentDateSelected, setCurrentDateSelected] = useState(new Date())
   const [filteredDateTasks, setFilteredDateTasks] = useState([]);
   const [isCalendarShow, setIsCalendarShow] = useState(false)
+  const [isTuneOpen, setIsTuneOpen] = useState(false);
+
 
   useEffect(() => {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
@@ -96,6 +98,10 @@ function App() {
     setIsCalendarShow(prevState => !prevState)
   }
 
+  const handleToggleTune = () => {
+    setIsTuneOpen(prevState => !prevState)
+  }
+
   let filteredTasks = filteredDateTasks;
   if (filter === "active") {
     filteredTasks = filteredDateTasks.filter((task) => !task.completed);
@@ -112,13 +118,13 @@ function App() {
   return (
     <div className="app">
       <h1 className="todo-app">TODO APP</h1>
-      <InputTask newTask={newTask} handleInputChange={handleInputChange} handleInputKeyPress={handleInputKeyPress} handleAddTask={handleAddTask} />
+      <InputTask newTask={newTask} handleInputChange={handleInputChange} handleInputKeyPress={handleInputKeyPress} handleAddTask={handleAddTask} handleToggleTune={handleToggleTune} />
       {isCalendarShow && <Calendar handleShowCalendar={handleShowCalendar} currentDateSelected={currentDateSelected} setCurrentDateSelected={setCurrentDateSelected} tasks={tasks} />}
-      <DateTask handlePrevDate={handlePrevDate} handleNextDate={handleNextDate} handleShowCalendar={handleShowCalendar} currentDateSelected={currentDateSelected} handleFilterDateChange={handleFilterDateChange} />
+      {isTuneOpen && <DateTask handlePrevDate={handlePrevDate} handleNextDate={handleNextDate} handleShowCalendar={handleShowCalendar} currentDateSelected={currentDateSelected} handleFilterDateChange={handleFilterDateChange} />}
       <FilterTask filter={filter} handleFilterChange={handleFilterChange} />
       {tasks.length > 0 && <Progressbar progress={progress} />}
       {filteredTasks.length === 0 && <EmptyTasks />}
-      <Tasks filteredTasks={filteredTasks} handleCompleteTask={handleCompleteTask} handleDeleteTask={handleDeleteTask} />
+      {filteredTasks.length > 0 && <Tasks filteredTasks={filteredTasks} handleCompleteTask={handleCompleteTask} handleDeleteTask={handleDeleteTask} />}
     </div>
   );
 }

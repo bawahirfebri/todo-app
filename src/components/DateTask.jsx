@@ -2,9 +2,9 @@ function DateTask({handlePrevDate, handleNextDate, handleShowCalendar, currentDa
   return (
     <div className="tasks-date">
       <div className="tasks-date__navigation">
-        <button onClick={handlePrevDate}>&lt;</button>
+        <span className="material-symbols-outlined" onClick={handlePrevDate}>navigate_before</span>
         <p onClick={handleShowCalendar}>{currentDateSelected.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
-        <button onClick={handleNextDate}>&gt;</button>
+        <span className="material-symbols-outlined" onClick={handleNextDate}>navigate_next</span>
       </div>
       <ul className="tasks-date__week">
         {Array.from({ length: 7 }, (_, index) => {
