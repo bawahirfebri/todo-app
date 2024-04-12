@@ -103,14 +103,6 @@ function App() {
   }
 
   let filteredTasks = filteredDateTasks;
-  if (filter === "active") {
-    filteredTasks = filteredDateTasks.filter((task) => !task.completed);
-  } else if (filter === "completed") {
-    filteredTasks = filteredDateTasks.filter((task) => task.completed);
-  }
-
-  filteredTasks.sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
-
   const totalTasksCount = tasks.length;
   const completedTasksCount = tasks.filter((task) => task.completed).length;
   const progress = totalTasksCount === 0 ? 0 : (completedTasksCount / totalTasksCount) * 100;
